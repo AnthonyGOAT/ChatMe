@@ -7,10 +7,12 @@ import firebase from 'firebase';
 export default class ChatScreen extends React.Component {
     static navigationOptions = ({navigation}) => {
         return{
+            // Set the title of the window by the user's name
             title: navigation.getParam('name',null)
         }
     }
-
+    
+    //construct the chat window by get the user's info and initialize the messageList
     constructor(props){
         super(props);
         this.state = {
@@ -22,7 +24,8 @@ export default class ChatScreen extends React.Component {
             messageList: []
         }
     }
-
+    
+    //Initialize the data tree in Firebase and send the User's information as well as the message list
     componentWillMount(){
         firebase.database().ref('messages').child(User.phone).child(this.state.person.phone).on('child_added', (value)=>{
             this.setState((prevState)=>{
@@ -32,11 +35,13 @@ export default class ChatScreen extends React.Component {
             })
         })
     }
-
+    
+    //handle change
     handleChange = key => val => {
         this.setState({ [key]: val})
     }
 
+    //set the time display on each message
     convertTime = (time) => {
         let d = new Date(time);
         let c = new Date();
@@ -47,6 +52,8 @@ export default class ChatScreen extends React.Component {
         }
         return result;
     }
+    
+    //communicate between the app and Firebase real-time database then update the new message
 
     sendMessage = async () => {
         if(this.state.textMessage.length>0){
@@ -63,7 +70,9 @@ export default class ChatScreen extends React.Component {
             this.setState({ textMessage: ''});
         }
     }
-
+    
+    // format the text messages
+    
     renderRow = ({item}) => {
         return(
             <View style ={{
@@ -81,6 +90,8 @@ export default class ChatScreen extends React.Component {
             </View>
         )
     }
+    
+    //format the text message input box and the window
 
     render(){
         let{height,width} = Dimensions.get('window');
